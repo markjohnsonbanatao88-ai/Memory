@@ -1,0 +1,15 @@
+import type { MemoryNamespace } from "@/lib/services/memory-extraction-contract";
+import type { MemoryReviewAction, MemoryReviewQueueItem } from "@/lib/services/memory-review-queue-contract";
+import type { ReviewQueueDecisionRecord } from "@/lib/db/memory-review-queue-repository-contract";
+import type { OperatorManualMemoryWorkflowReceipt } from "@/lib/services/operator-manual-memory-workflow-contract";
+
+export type FirstReviewedMemoryFixtureScenario = "real_life_fact_append" | "au_story_only_append" | "blocked_au_to_real_life_contamination" | "blocked_missing_audit" | "blocked_non_append_decision";
+export type FirstReviewedMemoryFixtureReviewItem = MemoryReviewQueueItem;
+export type FirstReviewedMemoryFixtureDecision = ReviewQueueDecisionRecord;
+export type FirstReviewedMemoryFixtureExpectedPreview = { ok: boolean; fingerprint: string; plannedSources: number; plannedItems: number; plannedPatches: number; plannedAuditLogs: number; blockers: string[] };
+export type FirstReviewedMemoryFixtureExpectedExecution = { shouldExecute: boolean; memoryItemId?: string; sourceId?: string; patchIdsCount: number; auditEventIdsCount: number };
+export type FirstReviewedMemoryFixtureExpectedReadback = { shouldVerify: boolean; memoryItemId?: string; browserVisible: boolean; auditVerified: boolean };
+export type FirstReviewedMemoryFixtureExpectedReceipt = Pick<OperatorManualMemoryWorkflowReceipt, "namespace" | "reviewItemId" | "decisionId" | "memoryItemId" | "sourceId" | "patchIdsCount" | "auditEventIdsCount" | "readbackStatus" | "browserVisibilityStatus" | "auditVerificationStatus">;
+export type FirstReviewedMemoryFixtureSafetySummary = { testOnly: true; productionSeed: false; publicPersistenceEnabled: false; productionIngestEnabled: false; wouldCallModel: false; wouldEmbed: false; semanticRetrievalEnabled: false; appendOnly: true; requiresInternalGate: true; requiresTypedConfirmation: true; requiresAuditVerification: true };
+export const firstReviewedMemoryFixtureSafetySummary: FirstReviewedMemoryFixtureSafetySummary = { testOnly: true, productionSeed: false, publicPersistenceEnabled: false, productionIngestEnabled: false, wouldCallModel: false, wouldEmbed: false, semanticRetrievalEnabled: false, appendOnly: true, requiresInternalGate: true, requiresTypedConfirmation: true, requiresAuditVerification: true };
+export type FirstReviewedMemoryFixture = { id: string; scenario: FirstReviewedMemoryFixtureScenario; title: string; description: string; namespace: MemoryNamespace; targetNamespace: MemoryNamespace; timestamp: string; fingerprint: string; idempotencyKey: string; typedConfirmation: "APPEND MEMORY"; reviewItem: FirstReviewedMemoryFixtureReviewItem; decision?: FirstReviewedMemoryFixtureDecision; decisionAction: MemoryReviewAction; expectedPreview: FirstReviewedMemoryFixtureExpectedPreview; expectedExecution: FirstReviewedMemoryFixtureExpectedExecution; expectedReadback: FirstReviewedMemoryFixtureExpectedReadback; expectedReceipt: FirstReviewedMemoryFixtureExpectedReceipt; expectedBlocked: boolean; expectedBlockerCodes: string[]; blockedExplanation?: string; safety: FirstReviewedMemoryFixtureSafetySummary };
