@@ -1,0 +1,8 @@
+import { createHash } from "crypto";
+import { operatorManualMemoryWorkflowSafetySummary, type OperatorManualMemoryWorkflowReceipt } from "@/lib/services/operator-manual-memory-workflow-contract";
+import type { MemoryNamespace } from "@/lib/services/memory-extraction-contract";
+const fp = (v: string) => createHash("sha256").update(v).digest("hex").slice(0, 16);
+export const fingerprintOperatorManualValue = fp;
+export function buildOperatorManualMemoryWorkflowReceipt(input: { workflowId?: string; namespace: MemoryNamespace; serverUserId: string; reviewItemId: string; decisionId: string; memoryItemId?: string; sourceId?: string; patchIdsCount?: number; auditEventIdsCount?: number; idempotencyKey: string; previewFingerprint: string; executionTimestamp?: string; readbackStatus: string; browserVisibilityStatus: string; auditVerificationStatus: string }): OperatorManualMemoryWorkflowReceipt {
+  return { workflowId: input.workflowId ?? `manual-memory-${Date.now()}`, namespace: input.namespace, serverUserIdFingerprint: fp(input.serverUserId), reviewItemId: input.reviewItemId, decisionId: input.decisionId, memoryItemId: input.memoryItemId, sourceId: input.sourceId, patchIdsCount: input.patchIdsCount ?? 0, auditEventIdsCount: input.auditEventIdsCount ?? 0, idempotencyKeyFingerprint: fp(input.idempotencyKey), previewFingerprint: fp(input.previewFingerprint), executionTimestamp: input.executionTimestamp ?? new Date().toISOString(), readbackStatus: input.readbackStatus, browserVisibilityStatus: input.browserVisibilityStatus, auditVerificationStatus: input.auditVerificationStatus, safety: operatorManualMemoryWorkflowSafetySummary };
+}
