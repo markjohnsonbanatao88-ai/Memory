@@ -20,9 +20,10 @@ const requiredLabels = [
 ];
 
 describe("navigation metadata", () => {
-  it("marks Dashboard and Health as implemented", () => {
+  it("marks Dashboard, Memory Browser, and Health as implemented", () => {
     expect(navItems.find((item) => item.label === "Dashboard")?.status).toBe("implemented");
     expect(navItems.find((item) => item.label === "Health")?.status).toBe("implemented");
+    expect(navItems.find((item) => item.label === "Memory Browser")?.status).toBe("implemented");
   });
 
   it("includes the planned Pandora modules", () => {
@@ -32,7 +33,7 @@ describe("navigation metadata", () => {
   });
 
   it("does not mark planned modules as implemented", () => {
-    const plannedModules = navItems.filter((item) => !["Dashboard", "Health"].includes(item.label));
+    const plannedModules = navItems.filter((item) => !["Dashboard", "Health", "Memory Browser"].includes(item.label));
 
     expect(plannedModules.length).toBeGreaterThan(0);
     expect(plannedModules.every((item) => item.status === "planned")).toBe(true);
