@@ -740,3 +740,11 @@ The database, RLS, tests, and memory contracts must come first. UI comes after t
 - Added approved-review persistence preview contracts, eligibility validation, append-only plan building, a disabled/internal route shell, repository interface contracts for future implementation, and review UI copy for a disabled persistence preview.
 - The next step is an internal/admin-gated transactional persistence executor that can append source/item/patch/audit records behind explicit gates.
 - This is still not production memory persistence: approved review items remain review records only, `/api/memory/ingest` remains production-disabled, and no model, retrieval, embedding, pgvector, GPT Actions, MCP, or Supabase memory writes are introduced.
+
+## Prompt 65 — Internal approved-review memory persistence executor boundary
+
+- Approved-review persistence preview is complete and remains no-write with `wouldPersist: false`.
+- Added an internal executor boundary for approved-review memory persistence plans.
+- Added a disabled-by-default public persist route stub; this is still not public production memory persistence.
+- Added in-memory test repository support and a Supabase repository skeleton that does not perform live writes.
+- Next step: implement a transactional Supabase RPC, for example `memory_execute_approved_review_persistence`, behind the explicit internal/admin gate.
