@@ -1,0 +1,2 @@
+import type { PersistedMemoryBrowserPatchView } from "@/lib/api/persisted-memory-browser-dto";
+export function MemoryPatchTimeline({ patches }: Readonly<{ patches: PersistedMemoryBrowserPatchView[] }>) { return <section className="section-card"><h2>Patch history panel</h2>{patches.length === 0 ? <p>No patch history is available for the selected item.</p> : <ol>{patches.map((p) => <li key={p.id}><strong>{p.patchType ?? "patch"}</strong><p>{p.reason ?? "No reason summary available."}</p><small>{p.createdAt ?? "undated"}</small></li>)}</ol>}</section>; }

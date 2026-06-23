@@ -773,3 +773,11 @@ The database, RLS, tests, and memory contracts must come first. UI comes after t
 - Authenticated persisted-memory read API/repository layer added for namespace-scoped, read-only access.
 - Next step: persisted-memory browser UI and audit/detail pages.
 - Still no semantic retrieval or ChatGPT memory context assembly.
+
+## Prompt 69 — Persisted-memory browser UI
+
+- Authenticated persisted-memory read API completed in Prompt 68.
+- Persisted-memory browser UI added for read-only inspection of persisted memories, sources, patch history, and audit trail.
+- Browser filtering is keyword-only and namespace-scoped; sensitive evidence is redacted by default.
+- Next step: audit/detail refinement and basic operator QA flow.
+- Still no semantic retrieval, embeddings, pgvector, model calls, GPT Actions, MCP, or ChatGPT context assembly.

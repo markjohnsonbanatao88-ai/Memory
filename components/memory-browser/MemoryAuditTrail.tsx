@@ -1,0 +1,2 @@
+import type { PersistedMemoryBrowserAuditView } from "@/lib/api/persisted-memory-browser-dto";
+export function MemoryAuditTrail({ events }: Readonly<{ events: PersistedMemoryBrowserAuditView[] }>) { return <section className="section-card"><h2>Audit trail panel</h2>{events.length === 0 ? <p>No audit events are available for the selected item.</p> : <ol>{events.map((e) => <li key={e.id}><strong>{e.action}</strong><p>{e.summary ?? `${e.tableName ?? "record"} ${e.recordId ?? ""}`}</p><small>{e.createdAt ?? "undated"}</small></li>)}</ol>}</section>; }
