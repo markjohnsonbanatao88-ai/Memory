@@ -797,3 +797,11 @@ The database, RLS, tests, and memory contracts must come first. UI comes after t
 - Admin persistence and QA execution remain disabled by default behind explicit environment, internal header, namespace, and admin/operator gates.
 - Next step: add operator-safe live configuration instructions and a deployment checklist.
 - Still no semantic retrieval, embeddings, model calls, GPT Actions, MCP, or ChatGPT context assembly.
+
+## Prompt 72 — Operator live readiness and gate validation
+
+Completed authenticated session/runtime gates from the previous phase are now surfaced through operator readiness validation. This phase adds an operator readiness contract, runtime gate validator, redacted environment safety snapshot, read-only readiness API/UI, and deployment checklist.
+
+Next step: operator-safe live read configuration and first manual dry-run using existing internal gates.
+
+Still no semantic retrieval, embeddings, model calls, GPT Actions, MCP, or ChatGPT context assembly.
