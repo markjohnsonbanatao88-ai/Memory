@@ -833,3 +833,10 @@ Still no semantic retrieval, embeddings, model calls, GPT Actions, MCP, or ChatG
 - One-item execution proof pack added for a controlled, operator-only proof layer around one prior approved-review memory append.
 - Next step: controlled operator execution runbook for one real approved item.
 - Still no semantic retrieval or ChatGPT context assembly.
+
+## Prompt 78 — Controlled operator execution runbook
+
+- Controlled one-item execution proof pack completed.
+- Controlled operator execution runbook added for the first internal one-item approved memory append.
+- Next step: perform one controlled operator append in internal mode and capture proof.
+- Still no semantic retrieval or ChatGPT context assembly.
