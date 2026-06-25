@@ -1,8 +1,9 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/lib/supabase/database.types";
+import { requireSupabasePublicKey } from "@/lib/supabase/public-key";
 
-function getRequiredServerEnv(name: "NEXT_PUBLIC_SUPABASE_URL" | "NEXT_PUBLIC_SUPABASE_ANON_KEY") {
+function getRequiredServerEnv(name: "NEXT_PUBLIC_SUPABASE_URL") {
   const value = process.env[name];
 
   if (!value) {
@@ -17,7 +18,7 @@ export async function createSupabaseServerClient() {
 
   return createServerClient<Database>(
     getRequiredServerEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    getRequiredServerEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    requireSupabasePublicKey(),
     {
       cookies: {
         getAll() {

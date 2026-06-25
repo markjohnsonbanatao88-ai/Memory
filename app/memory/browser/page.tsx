@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AppShell } from "@/components/layout/app-shell";
 import { MemoryBrowserShell } from "@/components/memory-browser/MemoryBrowserShell";
 import { PageHeader } from "@/components/ui/page-header";
@@ -11,5 +12,5 @@ export default async function MemoryBrowserPage({ searchParams }: Readonly<{ sea
   const params = await searchParams; const value = (key: string) => typeof params?.[key] === "string" ? params[key] : undefined; const namespace = value("namespace") as PersistedMemoryNamespace | undefined;
   const runtime = resolvePandoraRuntimeSafetyConfig(); const session = await resolvePandoraServerSession(); const context = createRepositoryContextFromPandoraSession({ sessionResult: session, namespace });
   const viewModel = await loadPersistedMemoryBrowserView({ authenticated: session.ok, context: context.ok ? context.context : { namespace }, runtime, repository: new InMemoryPersistedMemoryReadRepository(), selectedItemId: value("itemId"), filters: { namespace, keyword: value("keyword"), sourceId: value("sourceId"), memoryKind: value("memoryKind"), createdFrom: value("createdFrom"), createdTo: value("createdTo") } });
-  return <AppShell><PageHeader eyebrow="Persisted memory" title="Read-only memory browser" description="Read-only server-session scoped view of persisted memories, sources, patches, and audit trail." /><MemoryBrowserShell viewModel={viewModel} /></AppShell>;
+  return <AppShell><PageHeader eyebrow="Public foundation shell" title="Public memory browser shell" description="This public route keeps persisted-memory reads disabled. Use the authenticated admin route for Phase 3B proof work." actions={<><Link className="button-link button-link--primary" href="/admin/memory/browser?namespace=real_life">Go to Phase 3B admin browser</Link><Link className="button-link" href="/api/session">Check session</Link></>} /><MemoryBrowserShell viewModel={viewModel} routeKind="public" /></AppShell>;
 }
