@@ -34,7 +34,7 @@ export default async function DashboardPage() {
           eyebrow="Foundation dashboard"
           title="Implementation status without simulated memory data."
           description="This dashboard tracks completed foundation work and planned Pandora modules. It does not expose memory features because the memory engine and database schema are not implemented."
-          actions={<><Link className="button-link" href="/api/health">View health endpoint</Link><Link className="button-link" href="/memory/browser">Memory Browser</Link></>}
+          actions={<><Link className="button-link" href="/api/health">View health endpoint</Link><Link className="button-link" href="/admin/memory/browser?namespace=real_life">Memory Browser</Link></>}
         />
 
         <SectionCard title="Authentication status" description="Server-side Supabase session lookup for the current request. No profile or memory records are loaded.">
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
         </SectionCard>
 
         <SectionCard title="Memory Browser" description="Read-only view of persisted memories, sources, patches, and audit trail.">
-          <Link className="doc-link" href="/memory/browser"><span><strong>Memory Browser</strong><small>Read-only view of persisted memories, sources, patches, and audit trail.</small></span><StatusBadge status="implemented" /></Link>
+          <Link className="doc-link" href="/admin/memory/browser?namespace=real_life"><span><strong>Phase 3B Memory Browser</strong><small>Authenticated admin read-only browser for persisted memories, sources, patches, and audit trail.</small></span><StatusBadge status="implemented" /></Link>
         </SectionCard>
 
         <SectionCard title="Not implemented yet" description="Required systems that remain planned and must not be implied as live.">

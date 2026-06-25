@@ -1,8 +1,9 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/database.types";
+import { requireSupabasePublicKey } from "@/lib/supabase/public-key";
 
-function getRequiredEnv(name: "NEXT_PUBLIC_SUPABASE_URL" | "NEXT_PUBLIC_SUPABASE_ANON_KEY") {
+function getRequiredEnv(name: "NEXT_PUBLIC_SUPABASE_URL") {
   const value = process.env[name];
 
   if (!value) {
@@ -17,7 +18,7 @@ export async function middleware(request: NextRequest) {
 
   const supabase = createServerClient<Database>(
     getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    getRequiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    requireSupabasePublicKey(),
     {
       cookies: {
         getAll() {
