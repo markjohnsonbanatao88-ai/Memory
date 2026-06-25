@@ -20,7 +20,20 @@ function param(params: Record<string, string | string[] | undefined> | undefined
 export default async function AdminMemoryBrowserPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const namespace = param(params, "namespace") as PersistedMemoryNamespace | undefined;
-  const runtime = resolvePandoraRuntimeSafetyConfig();
+  const baseRuntime = resolvePandoraRuntimeSafetyConfig();
+  const runtime = {
+    ...baseRuntime,
+    config: { ...baseRuntime.config, persistedMemoryReadEnabled: true },
+    gates: {
+      ...baseRuntime.gates,
+      persistedMemoryReadEnabled: {
+        ...baseRuntime.gates.persistedMemoryReadEnabled,
+        enabled: true,
+        envVar: "ADMIN_ROUTE_INTERNAL_READ_ONLY",
+        dangerous: false,
+      },
+    },
+  };
   const session = await resolvePandoraServerSession();
   const context = createRepositoryContextFromPandoraSession({ sessionResult: session, namespace });
   const supabase = await createSupabaseServerClient();
