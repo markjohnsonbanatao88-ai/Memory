@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+function safeNextPath(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return value;
+}
+
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const nextUrl = new URL("/dashboard", requestUrl.origin);
+  const nextUrl = new URL(safeNextPath(requestUrl.searchParams.get("next")), requestUrl.origin);
   const failureUrl = new URL("/auth/login", requestUrl.origin);
 
   if (!code) {
