@@ -22,6 +22,7 @@
     "verify:first-reviewed-memory-fixture": "npx --yes tsx scripts/verify-first-reviewed-memory-fixture.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^15.0.0",
