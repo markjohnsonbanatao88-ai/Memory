@@ -7,3 +7,7 @@ Production redeploy trigger:
 - Expected production release: Phase 4A Memory Bridge.
 - Previous production SHA before retry: 789d6554be08f6d01fd944a27cc07d2c2cf99830.
 - Phase 4A merge SHA: a373cb7717ff3ab95786494cdef85f69cff5d149.
+
+Second deployment retry:
+- Purpose: retry after Vercel build-rate-limit blocked the first redeploy trigger.
+- Expected latest main SHA after this commit should become the production deployment source once Vercel quota clears.
