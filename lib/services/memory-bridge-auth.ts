@@ -39,6 +39,7 @@ export async function resolveMemoryBridgePrincipal(
 
   if (configuredToken && token && token === configuredToken) {
     if (!tokenUserId) return { ok: false, blockers: ["bridge_token_user_id_missing"] };
+    if (!env.PANDORA_MEMORY_BRIDGE_DB_KEY) return { ok: false, blockers: ["bridge_db_key_missing"] };
     return { ok: true, userId: tokenUserId, createdBy: tokenUserId, authType: "bridge_token", operator: true };
   }
 
