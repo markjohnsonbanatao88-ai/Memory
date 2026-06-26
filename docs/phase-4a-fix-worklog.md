@@ -11,3 +11,9 @@ Production redeploy trigger:
 Second deployment retry:
 - Purpose: retry after Vercel build-rate-limit blocked the first redeploy trigger.
 - Expected latest main SHA after this commit should become the production deployment source once Vercel quota clears.
+
+Third deployment retry:
+- Purpose: retry deployment under barangayoss-projects after waiting for the Vercel build-rate-limit window to clear.
+- Correct production scope: barangayoss-projects.
+- Correct project: memory.
+- Correct production domain: pandorasmemory.vercel.app.
