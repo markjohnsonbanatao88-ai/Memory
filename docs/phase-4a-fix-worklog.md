@@ -1,3 +1,3 @@
 # Phase 4A fix worklog
 
-Pending implementation details.
+Draft status retained until bridge token path is fixed.
