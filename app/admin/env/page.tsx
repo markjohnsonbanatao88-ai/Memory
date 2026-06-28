@@ -9,6 +9,15 @@ export default async function AdminEnvPage() {
     <h1>Pandora Env Broker</h1>
     <p>Internal environment-variable control plane. Raw secret values are never rendered; only status and redacted fingerprints appear.</p>
 
+    <section style={{ border: "1px solid #ddd", padding: 12, maxWidth: 760 }}>
+      <h2>Operator unlock</h2>
+      <p>Mutation buttons require either a Supabase session or an operator unlock. The key is accepted server-side, stored only in an HttpOnly cookie for 30 minutes, and is never rendered back to the page.</p>
+      <form method="post" action="/api/admin/env/status">
+        <label>Operator key <input name="operator_key" type="password" placeholder="Paste operator key once" style={{ minWidth: 320 }} /></label>
+        <button type="submit">Unlock Env Broker actions</button>
+      </form>
+    </section>
+
     <section><h2>Overview</h2><ul>
       <li>Total env keys discovered: {status.totals.discovered}</li>
       <li>Managed keys: {status.totals.managed}</li>
