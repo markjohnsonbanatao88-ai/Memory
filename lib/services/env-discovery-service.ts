@@ -16,12 +16,27 @@ const mustRegister = [
   "PANDORA_INTERNAL_JOB_TOKEN", "PANDORA_ENV_BROKER_ENABLED", "PANDORA_VERCEL_API_TOKEN", "PANDORA_ENV_VAULT_KEY", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_URL", "SUPABASE_ANON_KEY", "DATABASE_URL", "DIRECT_URL", "OPENAI_API_KEY", "OPENAI_PROJECT_ID", "OPENAI_ORG_ID", "NEXTAUTH_SECRET", "AUTH_SECRET", "NEXTAUTH_URL", "AUTH_URL", "SESSION_SECRET", "COOKIE_SECRET",
 ];
 
+// Keys that production genuinely cannot run safely without an explicit provider value,
+// i.e. the broker cannot synthesize a safe default for them (generated/provider auth).
+// Every other PANDORA flag/mode/tuning key is OPTIONAL: when unset it resolves to its
+// documented safe default (dangerous gates default to false per the safety policy), so an
+// unset provider value for those is NOT drift and must not raise the RED required-missing guard.
+const REQUIRED_PROVIDER_KEYS = new Set<string>([
+  "PANDORA_INTERNAL_JOB_TOKEN",
+  "PANDORA_ENV_BROKER_ENABLED",
+  "PANDORA_VERCEL_API_TOKEN",
+]);
+
+export function isRequiredProviderKey(key: string): boolean {
+  return REQUIRED_PROVIDER_KEYS.has(key);
+}
+
 export function discoverEnvKeys(root = process.cwd()): EnvDiscoveryItem[] {
   const found = new Map<string, EnvDiscoverySource[]>();
   for (const envVar of Object.values(resolvePandoraRuntimeSafetyConfig({}).gates).map((g) => g.envVar)) add(found, envVar, { file: "lib/config/pandora-runtime-safety-config.ts", line: 1 });
   for (const key of mustRegister) add(found, key, { file: "env-broker-known-catalog", line: 1 });
   for (const rel of DEFAULT_SCAN) scanPath(join(root, rel), rel, found);
-  return [...found.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, sources]) => ({ key, sources, classificationSuggestion: classifyEnvKey(key), defaultSuggestion: knownDefaults[key], requiredSuggestion: key.startsWith("PANDORA_") && key !== "PANDORA_ENV_VAULT_KEY", providerTargetSuggestion: key.includes("SUPABASE") ? "supabase" : "vercel" }));
+  return [...found.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, sources]) => ({ key, sources, classificationSuggestion: classifyEnvKey(key), defaultSuggestion: knownDefaults[key], requiredSuggestion: isRequiredProviderKey(key), providerTargetSuggestion: key.includes("SUPABASE") ? "supabase" : "vercel" }));
 }
 
 function add(map: Map<string, EnvDiscoverySource[]>, key: string, source: EnvDiscoverySource) { if (!map.has(key)) map.set(key, []); map.get(key)?.push(source); }
