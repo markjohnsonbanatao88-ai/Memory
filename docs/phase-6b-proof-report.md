@@ -40,3 +40,4 @@ CI trigger:
 - 2026-07-01T04:31:00Z
 - 2026-07-01T05:35:00Z Phase 6B.1 task panel deploy retry
 - 2026-07-01T07:08:00Z deploy retry
+- 2026-07-01T07:20:00Z choice form deploy retry
