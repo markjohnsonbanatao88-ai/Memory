@@ -34,3 +34,7 @@ Manual smoke:
 Guardrail:
 
 This phase is structured project memory only. It does not add connectors, prediction, or autonomous execution.
+
+CI trigger:
+
+- 2026-07-01T04:31:00Z
