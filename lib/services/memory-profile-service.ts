@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MemoryBridgeDbClient, MemoryBridgeNamespace } from "@/lib/services/memory-bridge-service";
+import { extractAdaptiveProfile, type AdaptiveProfileSourceEvent } from "@/lib/services/adaptive-profile-extractor";
 
 export type MemoryProfileInput = {
   user_id: string;
@@ -61,6 +62,58 @@ export async function upsertVersionedMemoryProfile(client: MemoryBridgeDbClient,
 
 export async function upsertProfileFromMemoryEvents(client: MemoryBridgeDbClient, input: { user_id: string; namespace: MemoryBridgeNamespace; profile_type: string; subject_key: string; summary: string; evidence_refs: unknown[]; dry_run?: boolean }) {
   return upsertVersionedMemoryProfile(client, { ...input, title: input.subject_key, confidence: input.evidence_refs.length ? 0.65 : 0.4 });
+}
+
+// Reads the user's namespace-scoped memory events, extracts a structured adaptive profile
+// deterministically (no model calls / embeddings), and upserts a versioned profile row.
+// This is what makes refresh_adaptive_profiles actually populate real profile content
+// instead of writing an empty stub.
+export async function refreshAdaptiveProfileFromEvents(
+  client: MemoryBridgeDbClient,
+  input: { user_id: string; namespace: MemoryBridgeNamespace; profile_type?: string; subject_key?: string; dry_run?: boolean; max_events?: number },
+) {
+  const limit = Math.min(Math.max(input.max_events ?? 200, 1), 500);
+  const read = await (client
+    .from("memory_events")
+    .select("id,source,source_ref,extracted_summary,raw_text,importance,sensitivity,status,created_at")
+    .eq("user_id", input.user_id)
+    .eq("namespace", input.namespace)
+    .neq("status", "archived")
+    .order("created_at", { ascending: false })
+    .limit(limit) as any as Promise<{ data: AdaptiveProfileSourceEvent[] | null; error: { message: string } | null }>);
+  const emptyCounts = { event_count: 0, preferences: 0, facts: 0, decisions: 0, open_loops: 0, risks: 0 };
+  if (read.error) {
+    return { ok: false, dry_run: !!input.dry_run, blockers: ["event_read_failed"], warnings: [read.error.message], next_step: "Check memory_events RLS and schema.", extracted: emptyCounts };
+  }
+  const extracted = extractAdaptiveProfile(read.data ?? [], input.namespace);
+  const result = await upsertVersionedMemoryProfile(client, {
+    user_id: input.user_id,
+    namespace: input.namespace,
+    profile_type: input.profile_type ?? "operating_profile",
+    subject_key: input.subject_key ?? "global",
+    title: input.subject_key ?? "global",
+    summary: extracted.summary,
+    facts: extracted.facts,
+    preferences: extracted.preferences,
+    patterns: extracted.patterns,
+    risks: extracted.risks,
+    open_loops: extracted.open_loops,
+    decisions: extracted.decisions,
+    evidence_refs: extracted.evidence_refs,
+    confidence: extracted.confidence,
+    dry_run: input.dry_run,
+  });
+  return {
+    ...result,
+    extracted: {
+      event_count: extracted.event_count,
+      preferences: extracted.preferences.length,
+      facts: extracted.facts.length,
+      decisions: extracted.decisions.length,
+      open_loops: extracted.open_loops.length,
+      risks: extracted.risks.length,
+    },
+  };
 }
 export const updateOperatingProfile = upsertProfileFromMemoryEvents;
 export const updateStyleProfile = upsertProfileFromMemoryEvents;
