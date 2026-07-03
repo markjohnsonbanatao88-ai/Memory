@@ -147,6 +147,21 @@ export async function createContextPack(client: MemoryBridgeDbClient, pack: Omit
   if (!pf.ok) return pf;
   const result = await client.from<MemoryContextPack>("memory_context_packs").insert({ ...pack, user_id: pf.data.userId, namespace: pf.data.namespace, status: pack.status ?? "active" }).select("*").single();
   if (result.error || !result.data) return { ok: false, blockers: ["context_pack_write_failed"], warnings: [result.error?.message ?? "unknown context pack write failure"], next_step: "Check memory_context_packs schema and RLS." };
+  // Supersede-on-distill: keep exactly one active pack per (user, namespace, pack_type). Status-only
+  // and reversible — archives older active packs, never deletes rows, never touches memory_events,
+  // never crosses namespace or pack_type. Best-effort: a failure here only adds a warning.
+  const warnings: string[] = [];
+  if (result.data.status === "active") {
+    const superseded = await (client.from("memory_context_packs")
+      .update({ status: "archived", updated_at: new Date().toISOString() })
+      .eq("user_id", pf.data.userId)
+      .eq("namespace", pf.data.namespace)
+      .eq("pack_type", result.data.pack_type)
+      .eq("status", "active")
+      .neq("id", result.data.id)
+      .select("id") as unknown as Promise<{ data: unknown[] | null; error: { message: string } | null }>);
+    if (superseded.error) warnings.push(`supersede_prior_packs_failed: ${superseded.error.message}`);
+  }
   await audit(client, { userId: pf.data.userId, namespace: pf.data.namespace, action: "memory_context_pack_distilled", table: "memory_context_packs", recordId: result.data.id, metadata: { packId: result.data.id, packType: result.data.pack_type } });
-  return { ok: true, data: result.data, blockers: [], warnings: [] };
+  return { ok: true, data: result.data, blockers: [], warnings };
 }
